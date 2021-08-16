@@ -1,5 +1,8 @@
-﻿using DatingApp.Data;
+﻿using AutoMapper;
+using DatingApp.Data;
+using DatingApp.DTOs;
 using DatingApp.Entities;
+using DatingApp.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,48 +16,32 @@ namespace DatingApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+    [Authorize] //all the methods inside this controller will be protected with authorization
     public class UsersController : ControllerBase
     {
         //Inject DataContext here in order to access,insert and manupulate the database 
-        private readonly DataContext _context;
-        public UsersController(DataContext context)
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
+        public UsersController(IUserRepository userRepository,IMapper mapper)
         {
-            _context = context;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
 
-        //[HttpGet]
-        ////api/users
-        //public ActionResult<IEnumerable<AppUser>> GetUsers()
-        //{
-        //    var users = _context.Users.ToList();
-        //    return users;
-        //}
-
-        //[HttpGet("{id}")]
-        ////api/users/2
-        //public ActionResult<AppUser> GetUsers(int id)
-        //{
-        //    var user = _context.Users.Find(id);
-        //    return user;
-        //}
-
-        //make this all methods as aynchronous methods
         [HttpGet]
-        [AllowAnonymous]
         //api/users
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
         {
-            var users = await _context.Users.ToListAsync();
-            return users;
+            var users = await _userRepository.GetMembersAsync();
+            return Ok(users);
         }
 
-        [HttpGet("{userid}")]
-        [Authorize]
-        //api/users/2
-        public async Task<ActionResult<AppUser>> GetUsers(int userid)
+        [HttpGet("{username}")]
+        //api/users/name
+        public async Task<ActionResult<MemberDto>> GetUserByUsername(string username)
         {
-            var user = await _context.Users.FindAsync(userid);
-            return user;
+            return  await _userRepository.GetMemberAsync(username);
         }
     }
 }

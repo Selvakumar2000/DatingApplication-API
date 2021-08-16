@@ -1,4 +1,6 @@
-﻿using DatingApp.Data;
+﻿using AutoMapper;
+using DatingApp.Data;
+using DatingApp.Helpers;
 using DatingApp.Interfaces;
 using DatingApp.Services;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +25,8 @@ namespace DatingApp.Extensions
 
             //For Jwt Token Creation and Handling
             services.AddScoped<ITokenService, TokenService>();
-
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             return services;
 
         }

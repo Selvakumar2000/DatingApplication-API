@@ -59,3 +59,5 @@ C:\Users\RB00271\source\repos\DatingApp\DatingApp\obj\Release\netcoreapp3.1\Dati
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\obj\Release\netcoreapp3.1\DatingApp.dll
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\obj\Release\netcoreapp3.1\DatingApp.pdb
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\obj\Release\netcoreapp3.1\DatingApp.genruntimeconfig.cache
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\obj\Release\netcoreapp3.1\DatingApp.csproj.AssemblyReference.cache
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Release\netcoreapp3.1\Data\UserSeedData.json
