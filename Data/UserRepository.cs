@@ -58,7 +58,7 @@ namespace DatingApp.Data
                 .Include(p => p.Photos)   //to get data from photos table,but it cause circular dependency error 
                 .ToListAsync(); //to avoid this,use a dto,in which what data you want to return
         }                       //because photo class have appuser property and appuser have photos property
-        public async Task<bool> SaveAllAsyn()
+        public async Task<bool> SaveAllAsync()
         {
             return await _context.SaveChangesAsync() > 0;
         }

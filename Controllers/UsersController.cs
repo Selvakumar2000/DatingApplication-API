@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace DatingApp.Controllers
@@ -42,6 +43,23 @@ namespace DatingApp.Controllers
         public async Task<ActionResult<MemberDto>> GetUserByUsername(string username)
         {
             return  await _userRepository.GetMemberAsync(username);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+        {
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;//return user's UserName from the token that the API uses to authenticate (claims)
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+
+            _mapper.Map(memberUpdateDto, user);  //or user.City=memberUpdateDto.City like this we need to write.
+
+//if we update the same information again,we are not going to get an error
+            _userRepository.Update(user);
+
+            //update the fileds
+            if (await _userRepository.SaveAllAsync()) return NoContent();
+            return BadRequest("Fail to Update User");
+
         }
     }
 }
