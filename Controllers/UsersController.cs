@@ -41,9 +41,9 @@ namespace DatingApp.Controllers
             return Ok(users);
         }
 
-        [HttpGet("{username}")]
+        [HttpGet("{username}",Name ="GetUser")]
         //api/users/name
-        public async Task<ActionResult<MemberDto>> GetUserByUsername(string username)
+        public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
             return await _userRepository.GetMemberAsync(username);
         }
@@ -65,7 +65,7 @@ namespace DatingApp.Controllers
 
         }
 
-        [HttpPost("addphoto")]
+        [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
         {
             var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername()); //get the username
@@ -84,10 +84,24 @@ namespace DatingApp.Controllers
 
             if (await _userRepository.SaveAllAsync())
             {
-                return _mapper.Map<PhotoDto>(photo);
+                //return _mapper.Map<PhotoDto>(photo);
+                //return CreatedAtRoute("GetUser", _mapper.Map<PhotoDto>(photo)); //we must pass the route parameter also...
+                return CreatedAtRoute("GetUser", new { username = user.UserName } ,_mapper.Map<PhotoDto>(photo));
             }
             return BadRequest("Problem adding Photo");
+        }
 
+       [HttpPut("set-main-photo/{photoId}")]
+        public async Task<ActionResult> SetMainPhoto(int photoId)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+            var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
+            if (photo.IsMain) return BadRequest("This is already your main photo");
+            var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
+            if (currentMain != null) currentMain.IsMain = false;
+            photo.IsMain = true;
+            if (await _userRepository.SaveAllAsync()) return NoContent();
+            return BadRequest("Fail to set main photo");
         }
     }
 }
