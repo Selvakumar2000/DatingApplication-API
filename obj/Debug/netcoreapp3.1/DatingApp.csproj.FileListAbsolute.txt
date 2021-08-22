@@ -65,3 +65,6 @@ C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\AutoMa
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.DotNet.PlatformAbstractions.dll
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyModel.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\CloudinaryDotNet.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.WebEncoders.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\System.Text.Encodings.Web.dll

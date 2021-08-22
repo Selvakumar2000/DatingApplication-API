@@ -17,6 +17,10 @@ namespace DatingApp.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services,IConfiguration config)
         {
+            //For Cloudinary Settings
+            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+            services.AddScoped<IPhotoService, PhotoService>();
+
             //For Database Operation
             services.AddDbContext<DataContext>(options =>
             {
@@ -25,8 +29,11 @@ namespace DatingApp.Extensions
 
             //For Jwt Token Creation and Handling
             services.AddScoped<ITokenService, TokenService>();
+
+            //For AutoMapper
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+
             return services;
 
         }

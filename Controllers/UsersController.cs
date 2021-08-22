@@ -2,6 +2,7 @@
 using DatingApp.Data;
 using DatingApp.DTOs;
 using DatingApp.Entities;
+using DatingApp.Extensions;
 using DatingApp.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,10 +25,12 @@ namespace DatingApp.Controllers
         //Inject DataContext here in order to access,insert and manupulate the database 
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
-        public UsersController(IUserRepository userRepository,IMapper mapper)
+        private readonly IPhotoService _photoService;
+        public UsersController(IUserRepository userRepository, IMapper mapper,IPhotoService photoService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _photoService = photoService;
         }
 
         [HttpGet]
@@ -42,23 +45,48 @@ namespace DatingApp.Controllers
         //api/users/name
         public async Task<ActionResult<MemberDto>> GetUserByUsername(string username)
         {
-            return  await _userRepository.GetMemberAsync(username);
+            return await _userRepository.GetMemberAsync(username);
         }
 
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;//return user's UserName from the token that the API uses to authenticate (claims)
+            var username = User.GetUsername();
             var user = await _userRepository.GetUserByUsernameAsync(username);
 
             _mapper.Map(memberUpdateDto, user);  //or user.City=memberUpdateDto.City like this we need to write.
 
-//if we update the same information again,we are not going to get an error
+            //if we update the same information again,we are not going to get an error
             _userRepository.Update(user);
 
             //update the fileds
             if (await _userRepository.SaveAllAsync()) return NoContent();
             return BadRequest("Fail to Update User");
+
+        }
+
+        [HttpPost("addphoto")]
+        public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername()); //get the username
+            var result = await _photoService.AddPhotoAsync(file);
+            if (result.Error != null) return BadRequest(result.Error.Message);
+            var photo = new Photo
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId
+            };
+            if(user.Photos.Count==0)
+            {
+                photo.IsMain = true;
+            }
+            user.Photos.Add(photo);
+
+            if (await _userRepository.SaveAllAsync())
+            {
+                return _mapper.Map<PhotoDto>(photo);
+            }
+            return BadRequest("Problem adding Photo");
 
         }
     }
