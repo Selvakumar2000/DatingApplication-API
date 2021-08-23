@@ -1,4 +1,5 @@
-﻿using DatingApp.Data;
+﻿using AutoMapper;
+using DatingApp.Data;
 using DatingApp.DTOs;
 using DatingApp.Entities;
 using DatingApp.Interfaces;
@@ -21,29 +22,13 @@ namespace DatingApp.Controllers
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
-        public AccountController(DataContext context, ITokenService tokenService)
+        private readonly IMapper _mapper;
+        public AccountController(DataContext context, ITokenService tokenService,IMapper mapper)
         {
             _context = context;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
-
-        //post data using query parameter
-        //[HttpPost]
-        ////api/account
-        //public async Task<ActionResult<AppUser>> Register(string username,string password)
-        //{
-        //    using var hmac = new HMACSHA512();
-        //    var user = new AppUser
-        //    {
-        //        UserName = username,
-        //        PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
-        //        PasswordSalt = hmac.Key
-        //    };
-        //    _context.Users.Add(user);
-        //    await _context.SaveChangesAsync();
-
-        //    return user;
-        //}  
 
         //post data using from JSON objects
         [HttpPost("Register")]
@@ -51,21 +36,23 @@ namespace DatingApp.Controllers
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
             if (await UserExists(registerDto.Username)) return BadRequest("UserName is already taken");
+
+            var user = _mapper.Map<AppUser>(registerDto);
   
             using var hmac = new HMACSHA512();
-            var user = new AppUser
-            {
-                UserName = registerDto.Username,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key
-            };
+
+            user.UserName = registerDto.Username;
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+            user.PasswordSalt = hmac.Key;
+
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
             return new UserDto
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                knownAs=user.KnownAs
             };
         }
         //make username to be unique
@@ -96,7 +83,8 @@ namespace DatingApp.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url
+                PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
+                knownAs = user.KnownAs
             };
         }
     }
