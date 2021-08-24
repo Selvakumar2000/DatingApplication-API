@@ -52,7 +52,8 @@ namespace DatingApp.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                knownAs=user.KnownAs
+                knownAs=user.KnownAs,
+                Gender=user.Gender
             };
         }
         //make username to be unique
@@ -84,7 +85,8 @@ namespace DatingApp.Controllers
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
                 PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
-                knownAs = user.KnownAs
+                knownAs = user.KnownAs,
+                Gender = user.Gender
             };
         }
     }
