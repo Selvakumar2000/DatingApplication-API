@@ -47,7 +47,7 @@ namespace DatingApp.Data
 
             query = query.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
 
-            //sort
+            //sort by created and lastActive property
             query = userParams.OrderBy switch
             {
                 "created" => query.OrderByDescending(u => u.Created),  //for case:created

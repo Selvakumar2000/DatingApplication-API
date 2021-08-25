@@ -34,6 +34,9 @@ namespace DatingApp.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
+            //For ActionFilter
+            services.AddScoped<LogUserActivity>();
+
             return services;
 
         }
