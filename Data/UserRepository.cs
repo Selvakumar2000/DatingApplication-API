@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace DatingApp.Data
 {
     public class UserRepository : IUserRepository
@@ -38,11 +39,18 @@ namespace DatingApp.Data
         public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
         {
             var query = _context.Users.AsQueryable();  //helps us to add filters
+
             var name = query.Select(u => u.UserName);
             var gender = query.Select(u => u.Gender);
             query = query.Where(u => u.UserName != userParams.CurrentUsername);
             query = query.Where(u => u.Gender == userParams.Gender);
-            
+
+            var minDob = DateTime.Today.AddYears(-userParams.MaxAge - 1);
+            var maxDob = DateTime.Today.AddYears(-userParams.MinAge);
+
+            var dob = query.Select(u => u.DateOfBirth);
+            query = query.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
+
             return await PagedList<MemberDto>.CreateAsync(
                                               query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).AsNoTracking(), 
                                               userParams.PageNumber, userParams.PageSize);
