@@ -17,7 +17,7 @@ namespace DatingApp.Middleware
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
         private readonly IHostEnvironment _env;
-        public ExceptionMiddleware(RequestDelegate next,ILogger<ExceptionMiddleware> logger,IHostEnvironment env)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger, IHostEnvironment env)
         {
             _next = next;
             _logger = logger;
@@ -30,7 +30,7 @@ namespace DatingApp.Middleware
             {
                 await _next(context); //going to handle the exception
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message); //log the exception in the terminal
                 //write out this exception to our response
@@ -44,8 +44,8 @@ namespace DatingApp.Middleware
 
                 //json response is in camelCase,so we need to create some options to enable this
                 //need to serialize this response into json response
-                var oprions = new JsonSerializerOptions {PropertyNamingPolicy=JsonNamingPolicy.CamelCase };
-                
+                var oprions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
                 var json = JsonSerializer.Serialize(response, oprions);
 
                 await context.Response.WriteAsync(json);

@@ -19,7 +19,7 @@ namespace DatingApp.Data
             if (await context.Users.AnyAsync()) return;
             var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
             var users = JsonSerializer.Deserialize<List<AppUser>>(userData);
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 using var hmac = new HMACSHA512();
                 user.UserName = user.UserName;

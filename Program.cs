@@ -29,9 +29,9 @@ namespace DatingApp
                 await context.Database.MigrateAsync(); //apply migration..if we drop our db..once restart it,db created
                 await Seed.Seedusers(context); //pass context to Seed class
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                var logger =services.GetRequiredService<ILogger<Program>>();
+                var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error Occured During Migration");
             }
             await host.RunAsync();

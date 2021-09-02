@@ -7,7 +7,7 @@ namespace DatingApp.Exceptions
 {
     public class ApiException
     {
-        public ApiException(int statusCode,string message=null,string details=null)
+        public ApiException(int statusCode, string message = null, string details = null)
         {
             StatusCode = statusCode;
             Message = message;

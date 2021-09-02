@@ -25,8 +25,7 @@ namespace DatingApp.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId,user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName,user.UserName)
+                new Claim(JwtRegisteredClaimNames.NameId,user.UserName)
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
@@ -34,13 +33,13 @@ namespace DatingApp.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires=DateTime.Now.AddDays(7),
-                SigningCredentials=creds
+                Expires = DateTime.Now.AddDays(7),
+                SigningCredentials = creds
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token); //now the token have userId and UserName(UniqueName)
+            return tokenHandler.WriteToken(token);
         }
     }
 }

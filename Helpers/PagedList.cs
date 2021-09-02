@@ -8,10 +8,10 @@ namespace DatingApp.Helpers
 {
     public class PagedList<T> : List<T>  //T can be determined during runtime T may be any DTO
     {
-        public PagedList(IEnumerable<T> items,int count, int pageNumber, int pageSize)
+        public PagedList(IEnumerable<T> items, int count, int pageNumber, int pageSize)
         {
             CurrentPage = pageNumber;
-            TotalPages = (int)Math.Ceiling(count/(double) pageSize);
+            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             PageSize = pageSize;
             TotalCount = count;
             AddRange(items);
@@ -22,9 +22,9 @@ namespace DatingApp.Helpers
         public int PageSize { get; set; }
         public int TotalCount { get; set; }
 
-        public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source,int pageNumber,int pageSize)
+        public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)
         {
-            var count = await source.CountAsync();
+            var count = await source.CountAsync(); //count the number of users in the db
             var items = await source.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
             return new PagedList<T>(items, count, pageNumber, pageSize);
         }

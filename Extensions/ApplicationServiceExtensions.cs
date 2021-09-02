@@ -15,7 +15,7 @@ namespace DatingApp.Extensions
 {
     public static class ApplicationServiceExtensions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services,IConfiguration config)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
             //For Cloudinary Settings
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
@@ -33,9 +33,6 @@ namespace DatingApp.Extensions
             //For AutoMapper
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
-
-            //For ActionFilter
-            services.AddScoped<LogUserActivity>();
 
             return services;
 

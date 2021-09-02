@@ -23,7 +23,7 @@ namespace DatingApp.Controllers
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
-        public AccountController(DataContext context, ITokenService tokenService,IMapper mapper)
+        public AccountController(DataContext context, ITokenService tokenService, IMapper mapper)
         {
             _context = context;
             _tokenService = tokenService;
@@ -38,7 +38,7 @@ namespace DatingApp.Controllers
             if (await UserExists(registerDto.Username)) return BadRequest("UserName is already taken");
 
             var user = _mapper.Map<AppUser>(registerDto);
-  
+
             using var hmac = new HMACSHA512();
 
             user.UserName = registerDto.Username;
@@ -52,14 +52,13 @@ namespace DatingApp.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                knownAs=user.KnownAs,
-                Gender=user.Gender
+                knownAs = user.KnownAs
             };
         }
         //make username to be unique
         private async Task<bool> UserExists(string username)
         {
-            return await _context.Users.AnyAsync(x => x.UserName==username);
+            return await _context.Users.AnyAsync(x => x.UserName == username);
         }
 
         [HttpPost("Login")]
@@ -67,8 +66,8 @@ namespace DatingApp.Controllers
         {
             /*UserName Check*/
             var user = await _context.Users
-                                     .Include(p=>p.Photos)
-                                     .SingleOrDefaultAsync(x=>x.UserName==loginDto.Username);
+                                     .Include(p => p.Photos)
+                                     .SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
             if (user == null) return Unauthorized("Invalid UserName");
 
             /*Password Check
@@ -79,14 +78,13 @@ namespace DatingApp.Controllers
             for (int i = 0; i < computedHash.Length; i++)
             {
                 if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid Password");
-            } 
+            }
             return new UserDto
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
-                knownAs = user.KnownAs,
-                Gender = user.Gender
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
+                knownAs = user.KnownAs
             };
         }
     }

@@ -27,7 +27,7 @@ namespace DatingApp.Services
         public async Task<ImageUploadResult> AddPhotoAsync(IFormFile file)
         {
             var UploadResult = new ImageUploadResult();
-            if(file.Length > 0)
+            if (file.Length > 0)
             {
                 using var stream = file.OpenReadStream();
                 var uploadParams = new ImageUploadParams

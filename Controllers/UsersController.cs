@@ -27,7 +27,7 @@ namespace DatingApp.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IPhotoService _photoService;
-        public UsersController(IUserRepository userRepository, IMapper mapper,IPhotoService photoService)
+        public UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -38,19 +38,12 @@ namespace DatingApp.Controllers
         //api/users             [FromQuery] is used for handle the empty queryparameters
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
-            userParams.CurrentUsername = user.UserName;
-            if(string.IsNullOrEmpty(userParams.Gender))
-            {
-                userParams.Gender = user.Gender == "male" ? "female" : "male";
-            }
-
             var users = await _userRepository.GetMembersAsync(userParams);
             Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
             return Ok(users);
         }
 
-        [HttpGet("{username}",Name ="GetUser")]
+        [HttpGet("{username}", Name = "GetUser")]
         //api/users/name
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
@@ -85,7 +78,7 @@ namespace DatingApp.Controllers
                 Url = result.SecureUrl.AbsoluteUri,
                 PublicId = result.PublicId
             };
-            if(user.Photos.Count==0)
+            if (user.Photos.Count == 0)
             {
                 photo.IsMain = true;
             }
@@ -95,12 +88,12 @@ namespace DatingApp.Controllers
             {
                 //return _mapper.Map<PhotoDto>(photo);
                 //return CreatedAtRoute("GetUser", _mapper.Map<PhotoDto>(photo)); //we must pass the route parameter also...
-                return CreatedAtRoute("GetUser", new { username = user.UserName } ,_mapper.Map<PhotoDto>(photo));
+                return CreatedAtRoute("GetUser", new { username = user.UserName }, _mapper.Map<PhotoDto>(photo));
             }
             return BadRequest("Problem adding Photo");
         }
 
-       [HttpPut("set-main-photo/{photoId}")]
+        [HttpPut("set-main-photo/{photoId}")]
         public async Task<ActionResult> SetMainPhoto(int photoId)
         {
             var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
@@ -120,7 +113,7 @@ namespace DatingApp.Controllers
             var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
             if (photo == null) return NotFound();
             if (photo.IsMain) return BadRequest("You cannot delete your Main Photo");
-            if(photo.PublicId!=null)
+            if (photo.PublicId != null)
             {
                 var result = await _photoService.DeletePhotoAsync(photo.PublicId);
                 if (result.Error != null) return BadRequest(result.Error.Message);

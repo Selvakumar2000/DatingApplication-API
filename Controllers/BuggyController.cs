@@ -26,7 +26,7 @@ namespace DatingApp.Controllers
         {
             return "secret text";
         }
- 
+
         [HttpGet("not-found")]
         public ActionResult<AppUser> GetNotFound()
         {
