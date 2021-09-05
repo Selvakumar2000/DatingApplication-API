@@ -21,7 +21,7 @@ namespace DatingApp.Controllers
     [ApiController]
 
     [Authorize] //all the methods inside this controller will be protected with authorization
-    public class UsersController : ControllerBase
+    public class UsersController : BaseApiController
     {
         //Inject DataContext here in order to access,insert and manupulate the database 
         private readonly IUserRepository _userRepository;
