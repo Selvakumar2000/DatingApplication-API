@@ -37,6 +37,9 @@ namespace DatingApp.Extensions
             //Update LastActive Property using IActionFilter
             services.AddScoped<LogUserActivity>();
 
+            //Likes Repository
+            services.AddScoped<ILikesRepository, LikesRepository>();
+
             return services;
 
         }

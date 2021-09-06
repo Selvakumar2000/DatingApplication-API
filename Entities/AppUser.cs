@@ -24,9 +24,11 @@ namespace DatingApp.Entities
         public string Country { get; set; }
         public ICollection<Photo> Photos { get; set; }  //one to many relationship (one user can have many photos)
 
-        //public int GetAge()
-        //{
-        //    return DateOfBirth.CalculateAge();
-        //}
+        //list of users that like the currently loggedin user (received likes)
+        public ICollection<UserLike> LikedByUsers { get; set; }
+
+        //list of users that are the currently loggedin user has liked (give likes)
+        public ICollection<UserLike> LikedUsers { get; set; }
+
     }
 }
