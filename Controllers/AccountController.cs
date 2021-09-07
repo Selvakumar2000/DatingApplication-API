@@ -41,7 +41,7 @@ namespace DatingApp.Controllers
 
             using var hmac = new HMACSHA512();
 
-            user.UserName = registerDto.Username;
+            user.UserName = registerDto.Username.ToLower();
             user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
             user.PasswordSalt = hmac.Key;
 
@@ -59,7 +59,7 @@ namespace DatingApp.Controllers
         //make username to be unique
         private async Task<bool> UserExists(string username)
         {
-            return await _context.Users.AnyAsync(x => x.UserName == username);
+            return await _context.Users.AnyAsync(x => x.UserName == username.ToLower());
         }
 
         [HttpPost("Login")]
@@ -68,7 +68,7 @@ namespace DatingApp.Controllers
             /*UserName Check*/
             var user = await _context.Users
                                      .Include(p => p.Photos)
-                                     .SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
+                                     .SingleOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
             if (user == null) return Unauthorized("Invalid UserName");
 
             /*Password Check
