@@ -30,5 +30,8 @@ namespace DatingApp.Entities
         //list of users that are the currently loggedin user has liked (give likes)
         public ICollection<UserLike> LikedUsers { get; set; }
 
+        public ICollection<Message> MessageSent { get; set; }
+        public ICollection<Message> MessageReceived { get; set; }
+
     }
 }
