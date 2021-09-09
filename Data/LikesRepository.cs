@@ -37,6 +37,7 @@ namespace DatingApp.Data
                 users = likes.Select(like => like.LikedUser);
             }
 
+            //gives list of users that have liked the currently loggedIn user
             if(likesParams.Predicate == "likedBy")
             {
                 likes = likes.Where(like => like.LikedUserId == likesParams.UserId);
@@ -58,7 +59,7 @@ namespace DatingApp.Data
             return await PagedList<LikeDto>.CreateAsync(likedUsers,likesParams.PageNumber,likesParams.PageSize);
         }
 
-        //to get the list of users that this user has liked
+        //to get the user with collection of likes
         public async Task<AppUser> GetUserWithLikes(int userId)
         {
             //getting user with their collection of likes

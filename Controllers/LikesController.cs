@@ -28,9 +28,9 @@ namespace DatingApp.Controllers
 
         //give like to another users by their username
         [HttpPost("{username}")]
-        public async Task<ActionResult> GetLike(string username)
+        public async Task<ActionResult> AddLike(string username)
         {
-            var sourceUserId = User.GetUserId();
+            var sourceUserId = User.GetUserId();        
             var likedUser = await _userRepository.GetUserByUsernameAsync(username);
             var sourceUser = await _likesRepository.GetUserWithLikes(sourceUserId);
 
@@ -38,6 +38,7 @@ namespace DatingApp.Controllers
 
             if (sourceUser.UserName == username) return BadRequest("You cannot like yourself");
 
+            //check currentuser already likes this user(name inside the username property)
             var userLike = await _likesRepository.GetUserLike(sourceUserId, likedUser.Id);
             //if we remove the like or provide dislike,we implement our own logic (like toggle option)
             if (userLike != null) return BadRequest("You already like this user");
