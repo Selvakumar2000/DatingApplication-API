@@ -38,7 +38,7 @@ namespace DatingApp.Data
 
         public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
         {
-            var query = _context.Users.AsQueryable();  //helps us to add filters
+            var query = _context.Users.AsQueryable();  //helps us to perform LINQ
 
             var name = query.Select(u => u.UserName);
             var gender = query.Select(u => u.Gender);

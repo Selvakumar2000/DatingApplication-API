@@ -60,13 +60,15 @@ namespace DatingApp.Data
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
         {
+            //condition:1 whether currentuser received a message from the recipientuser.
+            //condition:2 whether recipientuser received a message from the currentuser. 
             var messages = await _context.Messages
                 .Include(u => u.Sender).ThenInclude(p => p.Photos)
                 .Include(u => u.Recipient).ThenInclude(p => p.Photos)
                 .Where(m => m.Recipient.UserName == currentUsername && m.RecipientDeleted == false
-                         && m.Sender.UserName == recipientUsername
+                         && m.Sender.UserName == recipientUsername   //1
                          || m.Recipient.UserName == recipientUsername
-                         && m.Sender.UserName == currentUsername && m.SenderDeleted == false
+                         && m.Sender.UserName == currentUsername && m.SenderDeleted == false  //2
                       )
                 .OrderBy(m => m.MessageSent)
                 .ToListAsync();
