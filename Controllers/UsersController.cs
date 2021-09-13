@@ -34,6 +34,7 @@ namespace DatingApp.Controllers
             _photoService = photoService;
         }
 
+
         [HttpGet]
         //api/users             [FromQuery] is used for handle the empty queryparameters
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
@@ -47,6 +48,7 @@ namespace DatingApp.Controllers
             Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
             return Ok(users);
         }
+
 
         [HttpGet("{username}", Name = "GetUser")]
         //api/users/name

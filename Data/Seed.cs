@@ -1,4 +1,5 @@
 ﻿using DatingApp.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,21 +15,43 @@ namespace DatingApp.Data
     //fetch data from json file and insert into database
     public class Seed
     {
-        public static async Task Seedusers(DataContext context)
+        public static async Task Seedusers(UserManager<AppUser> userManager,
+                                           RoleManager<AppRole> roleManager)
         {
-            if (await context.Users.AnyAsync()) return;
+            if (await userManager.Users.AnyAsync()) return;
+
             var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
             var users = JsonSerializer.Deserialize<List<AppUser>>(userData);
+            if (userManager == null) return;
+
+            var roles = new List<AppRole>
+            {
+                new AppRole{Name = "Member"},
+                new AppRole{Name = "Admin"},
+                new AppRole{Name = "Moderator"},
+            };
+
+            foreach(var role in roles)
+            {
+                await roleManager.CreateAsync(role);
+            }
+
             foreach (var user in users)
             {
-                using var hmac = new HMACSHA512();
-                user.UserName = user.UserName;
-                user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Selvam"));
-                user.PasswordSalt = hmac.Key;
+                user.UserName = user.UserName.ToLower();
 
-                context.Users.Add(user);
+                await userManager.CreateAsync(user, "Selvam");
+
+                await userManager.AddToRoleAsync(user, "Member");
             }
-            await context.SaveChangesAsync();
+
+            var admin = new AppUser
+            {
+                UserName = "admin"
+            };
+
+            await userManager.CreateAsync(admin, "skAdmin");
+            await userManager.AddToRolesAsync(admin, new[] {"Admin", "Moderator" });
         }
     }
 }

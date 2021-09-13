@@ -68,3 +68,8 @@ C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Micros
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\CloudinaryDotNet.dll
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.WebEncoders.dll
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\System.Text.Encodings.Web.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll

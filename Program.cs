@@ -1,5 +1,7 @@
 using DatingApp.Data;
+using DatingApp.Entities;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,8 +28,10 @@ namespace DatingApp
             try //our middleware won't work here,we are outiside of our startup class..thst is why we use try catch block
             {
                 var context = services.GetRequiredService<DataContext>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
                 await context.Database.MigrateAsync(); //apply migration..if we drop our db..once restart it,db created
-                await Seed.Seedusers(context); //pass context to Seed class
+                await Seed.Seedusers(userManager, roleManager); //pass context to Seed class
             }
             catch (Exception ex)
             {

@@ -1,4 +1,6 @@
 ﻿using DatingApp.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace DatingApp.Data
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<AppUser, AppRole, int, IdentityUserClaim<int>, AppUserRole,
+                                                 IdentityUserLogin<int>, IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public DataContext(DbContextOptions options) : base(options)
         {
 
         }
-        public DbSet<AppUser> Users { get; set; }
         public DbSet<UserLike> Likes { get; set; }
         public DbSet<Message> Messages { get; set; }
 
@@ -21,11 +23,25 @@ namespace DatingApp.Data
         {
             base.OnModelCreating(builder);
 
-            //configure primary key for this table
+            //configure relationship between appuser to approle(many to many relationship)
+            builder.Entity<AppUser>()
+                   .HasMany(ur => ur.UserRoles)
+                   .WithOne(u => u.User)
+                   .HasForeignKey(ur => ur.UserId)
+                   .IsRequired();
+
+            builder.Entity<AppRole>()
+                   .HasMany(ur => ur.UserRoles)
+                   .WithOne(u => u.Role)
+                   .HasForeignKey(ur => ur.RoleId)
+                   .IsRequired();
+
+
+            //configure primary key for like table
             builder.Entity<UserLike>() 
                    .HasKey(k => new { k.SourceUserId, k.LikedUserId });
 
-            //configure the relationship for the table
+            //like table with many to many relationship
             builder.Entity<UserLike>()
                  .HasOne(s => s.SourceUser)
                  .WithMany(l => l.LikedUsers)
@@ -38,6 +54,8 @@ namespace DatingApp.Data
                 .HasForeignKey(s => s.LikedUserId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+
+            //message table with many to many relationship
             builder.Entity<Message>()
                 .HasOne(u => u.Recipient)
                 .WithMany(m => m.MessageReceived)
