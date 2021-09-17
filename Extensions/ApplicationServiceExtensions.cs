@@ -35,18 +35,13 @@ namespace DatingApp.Extensions
             services.AddScoped<ITokenService, TokenService>();
 
             //For AutoMapper
-            services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
 
             //Update LastActive Property using IActionFilter
             services.AddScoped<LogUserActivity>();
 
-            //Likes Repository
-            services.AddScoped<ILikesRepository, LikesRepository>();
-
-            //Messages Repository
-            services.AddScoped<IMessageRepository, MessageRepository>();
-
+            //For Repositories
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
 
         }
