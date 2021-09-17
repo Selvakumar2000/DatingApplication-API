@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace DatingApp.DTOs
@@ -16,6 +17,11 @@ namespace DatingApp.DTOs
         public string RecipientPhotoUrl { get; set; }
         public string Content { get; set; }
         public DateTime? DateRead { get; set; }
-        public DateTime MessageSent { get; set; } 
+        public DateTime MessageSent { get; set; }
+
+        [JsonIgnore] //this property not  going to be sent back to the client,but we can access this inside our API
+        public bool SenderDeleted { get; set; }
+        [JsonIgnore]
+        public bool RecipientDeleted { get; set; }
     }
 }
