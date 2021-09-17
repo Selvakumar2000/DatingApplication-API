@@ -67,6 +67,11 @@ namespace DatingApp.Data
                .HasOne(u => u.Sender)
                .WithMany(m => m.MessageSent)
                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Group>()
+                .HasMany(x => x.Connections)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

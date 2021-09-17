@@ -40,10 +40,12 @@ namespace DatingApp.Data
         {
             var query = _context.Users.AsQueryable();  //helps us to perform LINQ
 
-            var name = query.Select(u => u.UserName);
-            var gender = query.Select(u => u.Gender);
             query = query.Where(u => u.UserName != userParams.CurrentUsername);
             query = query.Where(u => u.Gender == userParams.Gender);
+
+            //var name = query.Select(u => u.UserName);
+            //var gender = query.Select(u => u.Gender);
+           
 
             var minDob = DateTime.Today.AddYears(-userParams.MaxAge - 1);
             var maxDob = DateTime.Today.AddYears(-userParams.MinAge);
