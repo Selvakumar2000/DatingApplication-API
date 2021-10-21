@@ -42,15 +42,6 @@ namespace DatingApp.Data
             return await _context.Connections.FindAsync(connectionId);
         }
 
-        public async Task<Group> GetGroupForConnection(string connectionId)
-        {
-            return await _context.Groups
-                .Include(c => c.Connections)
-                .Where(c => c.Connections.Any(x => x.ConnectionId == connectionId))
-                .FirstOrDefaultAsync();
-                    
-        }
-
         public async Task<Message> GetMessage(int id)
         {
             return await _context.Messages
@@ -66,7 +57,7 @@ namespace DatingApp.Data
                                  .FirstOrDefaultAsync(x => x.Name == groupName);
         }
 
-        public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
+        public async Task<IEnumerable<MessageDto>> GetMessagesForUser(MessageParams messageParams)
         {
             var query = _context.Messages
                                 .OrderByDescending(m => m.MessageSent)
@@ -78,12 +69,28 @@ namespace DatingApp.Data
                 "Inbox" => query.Where(u => u.RecipientUsername == messageParams.Username
                                     && u.RecipientDeleted == false),
                 "Outbox" => query.Where(u => u.SenderUsername == messageParams.Username
-                                     && u.SenderDeleted == false ),
+                                     && u.SenderDeleted == false),
                 _ => query.Where(u => u.RecipientUsername == messageParams.Username
                               && u.RecipientDeleted == false && u.DateRead == null)
             };
 
-            return await PagedList<MessageDto>.CreateAsync(query, messageParams.PageNumber, messageParams.PageSize);
+            var messages = await query.Select(message => new MessageDto
+            {
+                Id = message.Id,
+                SenderId = message.SenderId,
+                SenderUsername = message.SenderUsername,
+                SenderPhotoUrl = message.SenderPhotoUrl,
+                RecipientId = message.RecipientId,
+                RecipientUsername = message.RecipientUsername,
+                RecipientPhotoUrl = message.RecipientPhotoUrl,
+                Content = message.Content,
+                DateRead = message.DateRead,
+                MessageSent = message.MessageSent,
+                SenderDeleted = message.SenderDeleted,
+                RecipientDeleted = message.RecipientDeleted
+            }).ToListAsync();
+
+            return messages;
         }
 
         public async Task<IEnumerable<MessageDto>> GetMessageThread(string currentUsername, string recipientUsername)
@@ -109,6 +116,7 @@ namespace DatingApp.Data
                 {
                     message.DateRead = DateTime.UtcNow;
                 }
+                await _context.SaveChangesAsync();
             }
 
             return messages;
@@ -120,5 +128,9 @@ namespace DatingApp.Data
             _context.Connections.Remove(connection);
         }
 
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _context.SaveChangesAsync() > 0; 
+        }
     }
 }

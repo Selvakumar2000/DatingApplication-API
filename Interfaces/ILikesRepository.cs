@@ -12,6 +12,6 @@ namespace DatingApp.Interfaces
     {
         Task<UserLike> GetUserLike(int sourceUserId, int likedUserId);
         Task<AppUser> GetUserWithLikes(int userId);
-        Task<PagedList<LikeDto>> GetUserLikes(LikesParams likesParams);
+        Task<IEnumerable<LikeDto>> GetUserLikes(string predicate, int userId);
     }
 }

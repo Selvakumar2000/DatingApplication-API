@@ -15,7 +15,7 @@ namespace DatingApp.Entities
         public string RecipientUsername { get; set; }
         public AppUser Recipient { get; set; }
         public string Content { get; set; }
-        public DateTime? DateRead { get; set; }
+        public DateTime? DateRead { get; set; } //make it optional(can have null)
         public DateTime MessageSent { get; set; } = DateTime.UtcNow;
         public bool SenderDeleted { get; set; }
         public bool RecipientDeleted { get; set; }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DatingApp.Helpers
 {
-    public class MessageParams : PaginationParams
+    public class MessageParams
     {
         public string Username { get; set; }
         public string Container { get; set; } = "Unread";

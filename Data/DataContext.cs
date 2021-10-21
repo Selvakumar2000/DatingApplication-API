@@ -44,7 +44,7 @@ namespace DatingApp.Data
 
             //configure primary key for like table
             builder.Entity<UserLike>() 
-                   .HasKey(k => new { k.SourceUserId, k.LikedUserId });
+                 .HasKey(k => new { k.SourceUserId, k.LikedUserId });
 
             //like table with many to many relationship
             builder.Entity<UserLike>()
@@ -71,10 +71,10 @@ namespace DatingApp.Data
                .WithMany(m => m.MessageSent)
                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<Group>()
-                .HasMany(x => x.Connections)
-                .WithOne()
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder.Entity<Group>()
+            //    .HasMany(x => x.Connections)
+            //    .WithOne()
+            //    .OnDelete(DeleteBehavior.Cascade);
 
             builder.ApplyUtcDateTimeConverter();
         }

@@ -51,8 +51,10 @@ namespace DatingApp.Controllers
 
             if (user == null) return NotFound("Could not find user");
 
+            //userROles that the current user in
             var userRoles = await _userManager.GetRolesAsync(user);
 
+            //add user to the roles, unless they are already in that particular role
             var result = await _userManager.AddToRolesAsync(user,selectedRoles.Except(userRoles));
 
             if (!result.Succeeded) return BadRequest("Failed to add to roles");

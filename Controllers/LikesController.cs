@@ -18,10 +18,12 @@ namespace DatingApp.Controllers
     [ApiController]
     public class LikesController : BaseApiController
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public LikesController(IUnitOfWork unitOfWork)
+        private readonly IUserRepository _userRepository;
+        private readonly ILikesRepository _likesRepository;
+        public LikesController(IUserRepository userRepository,ILikesRepository likesRepository)
         {
-            _unitOfWork = unitOfWork;
+            _likesRepository = likesRepository;
+            _userRepository = userRepository;
         }
 
         //give like to another users by their username
@@ -29,15 +31,15 @@ namespace DatingApp.Controllers
         public async Task<ActionResult> AddLike(string username)
         {
             var sourceUserId = User.GetUserId();        
-            var likedUser = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
-            var sourceUser = await _unitOfWork.LikesRepository.GetUserWithLikes(sourceUserId);
+            var likedUser = await _userRepository.GetUserByUsernameAsync(username);
+            var sourceUser = await _likesRepository.GetUserWithLikes(sourceUserId);
 
             if (likedUser == null) return NotFound();
 
             if (sourceUser.UserName == username) return BadRequest("You cannot like yourself");
 
             //check currentuser already likes this user(name inside the username property)
-            var userLike = await _unitOfWork.LikesRepository.GetUserLike(sourceUserId, likedUser.Id);
+            var userLike = await _likesRepository.GetUserLike(sourceUserId, likedUser.Id);
             //if we remove the like or provide dislike,we implement our own logic (like toggle option)
             if (userLike != null) return BadRequest("You already like this user");
 
@@ -49,19 +51,16 @@ namespace DatingApp.Controllers
 
             sourceUser.LikedUsers.Add(userLike);
 
-            if (await _unitOfWork.Complete()) return Ok();
+            if (await _userRepository.SaveAllAsync()) return Ok();
 
             return BadRequest("Fail to like user");
         }
 
         //we can see the list of users which we gave likes based on predicate (liked -> we give  likedBy -> they give)
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes([FromQuery]LikesParams likesParams)
+        public async Task<ActionResult<IEnumerable<LikeDto>>> GetUserLikes(string predicate)
         {
-            likesParams.UserId = User.GetUserId();
-            var users = await _unitOfWork.LikesRepository.GetUserLikes(likesParams);
-
-            Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
+            var users = await _likesRepository.GetUserLikes(predicate, User.GetUserId());
 
             return Ok(users);
         }

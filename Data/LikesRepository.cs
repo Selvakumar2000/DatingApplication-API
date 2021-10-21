@@ -3,6 +3,7 @@ using DatingApp.Entities;
 using DatingApp.Extensions;
 using DatingApp.Helpers;
 using DatingApp.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -26,43 +27,39 @@ namespace DatingApp.Data
         }
 
         
-        public async Task<PagedList<LikeDto>> GetUserLikes(LikesParams likesParams)
+        public async Task<IEnumerable<LikeDto>> GetUserLikes(string predicate, int userId)
         {
             var users = _context.Users.OrderBy(u => u.UserName).AsQueryable();
             var likes = _context.Likes.AsQueryable();
 
-            if(likesParams.Predicate == "liked")
+            if(predicate == "liked")
             {
-                likes = likes.Where(like => like.SourceUserId == likesParams.UserId);
+                likes = likes.Where(like => like.SourceUserId == userId);
                 users = likes.Select(like => like.LikedUser);
             }
 
             //gives list of users that have liked the currently loggedIn user
-            if(likesParams.Predicate == "likedBy")
+            if(predicate == "likedBy")
             {
-                likes = likes.Where(like => like.LikedUserId == likesParams.UserId);
+                likes = likes.Where(like => like.LikedUserId == userId);
                 users = likes.Select(like => like.SourceUser);
                 //gives list of users that have liked the currently loggedin user.
             }
 
-            var likedUsers = users.Select(user => new LikeDto
+            return await users.Select(user => new LikeDto
             {
                 Username = user.UserName,
                 KnownAs = user.KnownAs,
                 Age = user.DateOfBirth.CalculateAge(),
-                PhotoUrl = user.Photos.FirstOrDefault(p =>p.IsMain).Url,
+                PhotoUrl = user.Photos.FirstOrDefault(p => p.IsMain).Url,
                 City = user.City,
                 Id = user.Id
-
-            });
-
-            return await PagedList<LikeDto>.CreateAsync(likedUsers,likesParams.PageNumber,likesParams.PageSize);
+            }).ToListAsync();
         }
 
-        //to get the user with collection of likes
+        //to get the list of users that the current user has liked
         public async Task<AppUser> GetUserWithLikes(int userId)
         {
-            //getting user with their collection of likes
             return await _context.Users
                                  .Include(x => x.LikedUsers)
                                  .FirstOrDefaultAsync(x => x.Id == userId);

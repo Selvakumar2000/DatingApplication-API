@@ -41,7 +41,10 @@ namespace DatingApp.Extensions
             services.AddScoped<LogUserActivity>();
 
             //For Repositories
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IMessageRepository,MessageRepository>();
+            services.AddScoped<ILikesRepository, LikesRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+
             return services;
 
         }

@@ -20,6 +20,8 @@ namespace DatingApp.Extensions
             services.AddIdentityCore<AppUser>(opt =>
             {
                 opt.Password.RequireDigit = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequireLowercase = false;
                 opt.Password.RequireNonAlphanumeric = false; //by default identity model required complex password
                 opt.User.AllowedUserNameCharacters = string.Empty;
 
@@ -36,10 +38,11 @@ namespace DatingApp.Extensions
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"])),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateIssuer = false,  //API Server
+                    ValidateAudience = false //Angular App
                 };
 
+                //this allows the client to send up the token as a query string
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>

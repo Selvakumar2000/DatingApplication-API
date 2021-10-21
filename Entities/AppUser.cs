@@ -18,14 +18,17 @@ namespace DatingApp.Entities
         public string Interests { get; set; }
         public string City { get; set; }
         public string Country { get; set; }
-        public ICollection<Photo> Photos { get; set; }  //one to many relationship (one user can have many photos)
 
-        //list of users that like the currently loggedin user (received likes)
-        public ICollection<UserLike> LikedByUsers { get; set; }
+        //one to many relationship (one user can have many photos)
+        public ICollection<Photo> Photos { get; set; }
+
+        //many to one relationship
+        public ICollection<UserLike> LikedByUsers { get; set; }//list of users that like the currently loggedin user(received likes)
 
         //list of users that are the currently loggedin user has liked (give likes)
         public ICollection<UserLike> LikedUsers { get; set; }
 
+        //many to many relationship
         public ICollection<Message> MessageSent { get; set; }
         public ICollection<Message> MessageReceived { get; set; }
 

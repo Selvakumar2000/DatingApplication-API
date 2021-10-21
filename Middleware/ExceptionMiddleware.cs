@@ -28,7 +28,7 @@ namespace DatingApp.Middleware
         {
             try
             {
-                await _next(context); //going to handle the exception
+                await _next(context); 
             }
             catch (Exception ex)
             {

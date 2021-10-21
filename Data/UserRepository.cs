@@ -4,6 +4,7 @@ using DatingApp.DTOs;
 using DatingApp.Entities;
 using DatingApp.Helpers;
 using DatingApp.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -93,6 +94,11 @@ namespace DatingApp.Data
         public void Update(AppUser user)
         {
             _context.Entry(user).State = EntityState.Modified;
+        }
+
+        public async Task<bool> SaveAllAsync()
+        {
+            return await _context.SaveChangesAsync()>0;
         }
 
     }

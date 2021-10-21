@@ -31,6 +31,7 @@ namespace DatingApp.Services
                 new Claim(JwtRegisteredClaimNames.UniqueName,user.UserName),
             };
 
+            //get the roles of an user
             var roles = await _userManager.GetRolesAsync(user);
 
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

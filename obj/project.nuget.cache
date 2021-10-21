@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "D1SI33n0ID8WkuNNuvEQH9O0sK0K/RW6NlYxKdqDu9mio1SLctMuOdZlFaPB1Vnoa37dJ3dw2Uvk1VSxmsf97w==",
+  "dgSpecHash": "eCgVk2CKueE/EhFafOLwyxzvEz6WXTExhhuKoW6H+b7lIoqbFBcwkXftXbqO55LbGwRfXgf5tElX3zW22Mf4Zw==",
   "success": true,
   "projectFilePath": "C:\\Users\\RB00271\\source\\repos\\DatingApp\\DatingApp\\DatingApp.csproj",
   "expectedPackageFiles": [
@@ -121,7 +121,8 @@
     "C:\\Users\\RB00271\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\RB00271\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\RB00271\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512",
-    "C:\\Users\\RB00271\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512"
+    "C:\\Users\\RB00271\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512",
+    "C:\\Users\\RB00271\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.18\\microsoft.netcore.app.host.win-x64.3.1.18.nupkg.sha512"
   ],
   "logs": []
 }

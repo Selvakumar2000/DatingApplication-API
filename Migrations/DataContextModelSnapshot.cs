@@ -377,8 +377,7 @@ namespace DatingApp.Migrations
                 {
                     b.HasOne("DatingApp.Entities.Group", null)
                         .WithMany("Connections")
-                        .HasForeignKey("GroupName")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GroupName");
                 });
 
             modelBuilder.Entity("DatingApp.Entities.Message", b =>

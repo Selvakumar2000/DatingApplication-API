@@ -2,6 +2,7 @@
 using DatingApp.Data;
 using DatingApp.DTOs;
 using DatingApp.Entities;
+using DatingApp.Extensions;
 using DatingApp.Interfaces;
 using DatingApp.Services;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +27,7 @@ namespace DatingApp.Controllers
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, 
-                                 ITokenService tokenService, IMapper mapper)
+                                 ITokenService tokenService, IMapper mapper,DataContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -39,7 +40,7 @@ namespace DatingApp.Controllers
         //api/account
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
-            if (await UserExists(registerDto.Username)) return BadRequest("UserName is already taken");
+            if (await UserExists(registerDto.Username)) return BadRequest("UserName is already taken  Choose Someother Name");
 
             var user = _mapper.Map<AppUser>(registerDto);
 
@@ -75,11 +76,11 @@ namespace DatingApp.Controllers
                                      .Include(p => p.Photos)
                                      .SingleOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
-            if (user == null) return Unauthorized("Invalid UserName");
+            if (user == null) return Unauthorized("UserName is Incorrect");
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
-            if (!result.Succeeded) return Unauthorized();
+            if (!result.Succeeded) return Unauthorized("Password is Incorrect");
 
             return new UserDto
             {
