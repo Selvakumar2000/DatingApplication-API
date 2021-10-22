@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 namespace DatingApp.Controllers
 {
     [ServiceFilter(typeof(LogUserActivity))]
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class BaseApiController : ControllerBase
     {
 

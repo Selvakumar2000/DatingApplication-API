@@ -42,6 +42,13 @@ namespace DatingApp.Data
             return await _context.Connections.FindAsync(connectionId);
         }
 
+        public async Task<Group> GetGroupForConnection(string connectionId)
+        {
+            return await _context.Groups.Include(c => c.Connections)
+                                        .Where(c => c.Connections.Any(x => x.ConnectionId == connectionId))
+                                        .FirstOrDefaultAsync();
+        }
+
         public async Task<Message> GetMessage(int id)
         {
             return await _context.Messages
@@ -110,9 +117,9 @@ namespace DatingApp.Data
             var unreadMessages = messages.Where(m => m.DateRead == null && m.RecipientUsername == currentUsername)
                                          .ToList();
 
-            if(unreadMessages.Any())
+            if (unreadMessages.Any())
             {
-                foreach(var message in unreadMessages)
+                foreach (var message in unreadMessages)
                 {
                     message.DateRead = DateTime.UtcNow;
                 }
@@ -130,7 +137,7 @@ namespace DatingApp.Data
 
         public async Task<bool> SaveAllAsync()
         {
-            return await _context.SaveChangesAsync() > 0; 
+            return await _context.SaveChangesAsync() > 0;
         }
     }
 }

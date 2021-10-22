@@ -7,19 +7,20 @@ namespace DatingApp.SignalR
 {
     public class PresenceTracker
     {
-/*   ConnectionId:
- *Everytime the user connected to the hub, they are going to be given a connectionId. Now there is nothing to stop a user from
- connecting to the same application from a different device and they would get a different connectionId for each different
- connection that they are having or making to our application.
- */
-//store username and connectionId(list of string) as a key-value pair and it is shared among every user who connect to the server.
+        /*   ConnectionId:
+         *Everytime the user connected to the hub, they are going to be given a connectionId. Now there is nothing to stop a user from
+         connecting to the same application from a different device and they would get a different connectionId for each different
+         connection that they are having or making to our application.
+         */
+        //store username and connectionId(list of string) as a key-value pair and it is shared among every user who connect to the server.
         private static readonly Dictionary<string, List<string>> OnlineUsers = new Dictionary<string, List<string>>();
 
-        public Task UserConnected(string username, string connectionId)
+        public Task<bool> UserConnected(string username, string connectionId)
         {
-            lock(OnlineUsers)
+            bool isOnline = false;
+            lock (OnlineUsers)
             {
-                if(OnlineUsers.ContainsKey(username))
+                if (OnlineUsers.ContainsKey(username))
                 {
                     //if the user already in a dictionary, adding connectionId to that user
                     OnlineUsers[username].Add(connectionId);
@@ -28,32 +29,35 @@ namespace DatingApp.SignalR
                 {
                     //if the user is newly connected to the server, add them with username and connectionId inside the dictionary.
                     OnlineUsers.Add(username, new List<string> { connectionId });
+                    isOnline = true;
                 }
             }
-            return Task.CompletedTask;
+            return Task.FromResult(isOnline);
         }
 
-        public Task UserDisconnected(string username, string connectionId)
+        public Task<bool> UserDisconnected(string username, string connectionId)
         {
-            lock(OnlineUsers)
+            bool isOffline = false;
+            lock (OnlineUsers)
             {
-                if (!OnlineUsers.ContainsKey(username)) return Task.CompletedTask;
+                if (!OnlineUsers.ContainsKey(username)) return Task.FromResult(isOffline);
 
                 OnlineUsers[username].Remove(connectionId);
 
-                if(OnlineUsers[username].Count == 0)
+                if (OnlineUsers[username].Count == 0)
                 {
                     OnlineUsers.Remove(username);
+                    isOffline = true;
                 }
             }
-            return Task.CompletedTask;
+            return Task.FromResult(isOffline);
         }
 
         public Task<string[]> GetOnlineUsers()
         {
             string[] onlineUsers;
-            
-            lock(OnlineUsers)
+
+            lock (OnlineUsers)
             {
                 onlineUsers = OnlineUsers.OrderBy(k => k.Key).Select(k => k.Key).ToArray();
             }

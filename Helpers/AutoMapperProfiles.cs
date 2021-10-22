@@ -17,11 +17,11 @@ namespace DatingApp.Helpers
             CreateMap<AppUser, MemberDto>()
                 .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Photos.FirstOrDefault(x => x.IsMain).Url))
                 .ForMember(dest => dest.Age, opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge()));
-            
+
             CreateMap<Photo, PhotoDto>();
-            
+
             CreateMap<MemberUpdateDto, AppUser>();
-            
+
             CreateMap<RegisterDto, AppUser>();
             //Usage: that we don't need to map the properties that we are receiving in our account controller
 

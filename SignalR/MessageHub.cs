@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DatingApp.Data;
 using DatingApp.DTOs;
 using DatingApp.Entities;
 using DatingApp.Extensions;
@@ -18,14 +19,16 @@ namespace DatingApp.SignalR
         private readonly IUserRepository _userRepository;
         private readonly IHubContext<PresenceHub> _presenceHub;
         private readonly PresenceTracker _tracker;
-        public MessageHub(IMessageRepository messageRepository, IMapper mapper,IUserRepository userRepository,
-                          IHubContext<PresenceHub> presenceHub, PresenceTracker tracker)
+        private readonly DataContext _context;
+        public MessageHub(IMessageRepository messageRepository, IMapper mapper, IUserRepository userRepository,
+                          IHubContext<PresenceHub> presenceHub, PresenceTracker tracker,DataContext context)
         {
             _messageRepository = messageRepository;
             _mapper = mapper;
             _userRepository = userRepository;
             _presenceHub = presenceHub;
             _tracker = tracker;
+            _context = context;
         }
 
         /*  Concept:
@@ -33,7 +36,6 @@ namespace DatingApp.SignalR
         and other username and this will be in alphabetical order as well. So that whatever the user connects to the particular hub,
         we are going to put them in a group and we want to make sure it's the same group every time if they are still chatting to the same
         user.
-
         Ex: Nazriya chat with Selva groupName would be Nazriya-Selva
         */
         public override async Task OnConnectedAsync()
@@ -42,11 +44,16 @@ namespace DatingApp.SignalR
             var otherUser = httpContext.Request.Query["user"].ToString();
             var groupName = GetGroupName(Context.User.GetUsername(), otherUser);
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-            await AddToGroup(Context,groupName);
+
+            var group = await AddToGroup(groupName);
+            await Clients.Group(groupName).SendAsync("UpdatedGroup", group);
 
             var messages = await _messageRepository.GetMessageThread(Context.User.GetUsername(), otherUser);
 
-            await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
+            if (HasChanges()) await _messageRepository.SaveAllAsync();
+            //await _messageRepository.SaveAllAsync();
+
+            await Clients.Caller.SendAsync("ReceiveMessageThread", messages);
 
         }
 
@@ -59,7 +66,9 @@ namespace DatingApp.SignalR
         //if the user diconnected from the hub, they are also removed from the group.
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await RemoveFromMessageGroup(Context.ConnectionId);
+            var group = await RemoveFromMessageGroup();
+            await Clients.Group(group.Name).SendAsync("UpdatedGroup", group);
+
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -91,32 +100,33 @@ namespace DatingApp.SignalR
             {
                 message.DateRead = DateTime.UtcNow;
             }
-            //else
-            //{
-            //    var connections = await _tracker.GetConnectionsForUser(recipient.UserName);
+            else
+            {
+                var connections = await _tracker.GetConnectionsForUser(recipient.UserName);
 
-            //    if (connections != null)
-            //    {
-            //        await _presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived",
-            //            new { username = sender.UserName, knownAs = sender.KnownAs });
-            //    }
-            //}
+                if (connections != null)
+                {
+                    //online but not connected
+                    await _presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived",
+                        new { username = sender.UserName, knownas = sender.KnownAs });
+                }
+            }
 
             _messageRepository.AddMessage(message);
 
             if (await _messageRepository.SaveAllAsync())
             {
-                
+
                 await Clients.Group(groupName).SendAsync("NewMessage", _mapper.Map<MessageDto>(message));
             }
         }
 
-        public async Task<bool> AddToGroup(HubCallerContext context,string groupName)
+        public async Task<Group> AddToGroup(string groupName)
         {
             var group = await _messageRepository.GetMessageGroup(groupName);
             var connection = new Connection(Context.ConnectionId, Context.User.GetUsername());
 
-            if(group == null)
+            if (group == null)
             {
                 group = new Group(groupName);
                 _messageRepository.AddGroup(group);
@@ -124,18 +134,29 @@ namespace DatingApp.SignalR
 
             group.Connections.Add(connection);
 
-            return await _messageRepository.SaveAllAsync();
+            if(await _messageRepository.SaveAllAsync()) return group;
+
+            throw new HubException("Failed to join group");
         }
 
-        public async Task RemoveFromMessageGroup(string connectionId)
+        public async Task<Group> RemoveFromMessageGroup()
         {
-            var connection = await _messageRepository.GetConnection(connectionId);
+            var group = await _messageRepository.GetGroupForConnection(Context.ConnectionId);
+            var connection = group.Connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
             _messageRepository.RemoveConnection(connection);
 
-            await _messageRepository.SaveAllAsync();
+            if(await _messageRepository.SaveAllAsync()) return group;
+
+            throw new HubException("Failed to remove from group");
         }
 
+        public bool HasChanges()
+        {
+            _context.ChangeTracker.DetectChanges();
+            var changes = _context.ChangeTracker.HasChanges();
 
-
+            return changes;
+        }
     }
 }
