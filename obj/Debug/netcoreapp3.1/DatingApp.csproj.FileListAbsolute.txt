@@ -73,3 +73,5 @@ C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Micros
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
 C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Npgsql.dll
+C:\Users\RB00271\source\repos\DatingApp\DatingApp\bin\Debug\netcoreapp3.1\Npgsql.EntityFrameworkCore.PostgreSQL.dll
