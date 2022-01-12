@@ -27,7 +27,7 @@ namespace DatingApp.Controllers
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, 
-                                 ITokenService tokenService, IMapper mapper,DataContext context)
+                                 ITokenService tokenService, IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
